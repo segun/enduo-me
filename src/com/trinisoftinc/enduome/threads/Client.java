@@ -7,6 +7,7 @@ package com.trinisoftinc.enduome.threads;
 import com.trinisoft.baselib.io.BufferedReader;
 import com.trinisoft.baselib.io.BufferedWriter;
 import com.trinisoft.baselib.util.Echo;
+import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -22,13 +23,15 @@ import javax.microedition.io.SocketConnection;
 public class Client implements Runnable {
 
     private String url;
-    private Vector clientsList, messageList;
+    public Vector onlineList, messageList;
     private Message lastMessage;
     public boolean isRunning = false;
+    EnduoMe parent;
 
-    public Client(String url) {
+    public Client(String url, EnduoMe parent) {
         this.url = url;
-        clientsList = new Vector();
+        this.parent = parent;
+        onlineList = new Vector();
         messageList = new Vector();
     }
 
@@ -41,14 +44,7 @@ public class Client implements Runnable {
     }
 
     public void updateClientsList(Vector newList) {
-        this.clientsList = newList;
-        Enumeration clientsEnumeration = clientsList.elements();
-        System.out.print("CLIENTS: ");
-        while (clientsEnumeration.hasMoreElements()) {
-            System.out.print(clientsEnumeration.nextElement().toString());
-        }
-        System.out.println();
-        //do some ui things here too
+        this.onlineList = newList;
     }
 
     public void setLastMessage(Message lastMessage) {
