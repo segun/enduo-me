@@ -13,7 +13,6 @@ import com.sun.lwuit.List;
 import com.sun.lwuit.layouts.BorderLayout;
 import com.sun.lwuit.list.ListCellRenderer;
 import com.trinisoft.enduome.EnduoMe;
-import com.trinisoft.mlib.views.BaseForm;
 import java.util.Vector;
 
 /**
@@ -21,6 +20,7 @@ import java.util.Vector;
  * @author trinisoftinc
  */
 public class OnlineListForm extends Container {
+
     EnduoMe parent;
     Vector onlineVector;
     List online = null;
@@ -32,33 +32,10 @@ public class OnlineListForm extends Container {
     }
 
     private void init() {
-        if(online == null) {
-            onlineVector = parent.client.onlineList;
-            online = new List(onlineVector);
-            online.setListCellRenderer(new ButtonRenderer());
-        }
-        addComponent(BorderLayout.NORTH, new Label("Online Now!!!"));
+        setLayout(new BorderLayout());
+        onlineVector = parent.client.onlineList;
+        online = new List(onlineVector);
+        online.setListCellRenderer(new Renderers.ButtonRenderer());
         addComponent(BorderLayout.CENTER, online);
-    }
-
-    class ButtonRenderer implements ListCellRenderer {
-
-        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
-            Command c = new Command(String.valueOf(value));
-            if(isSelected) {
-                Button b = new Button(c);
-                b.setFocus(true);
-                b.getStyle().setBgColor(0x6d869e);
-                b.setUIID("ComboBox");
-                return b;
-            }
-            return new Button(c);
-        }
-
-
-        public Component getListFocusComponent(List list) {
-            return null;
-        }
-
     }
 }

@@ -51,6 +51,7 @@ public class ProtocolHandler implements Runnable {
                     } else if (line.startsWith("message:")) {
                         line = MStrings.replace(line, "message:", "");
                         Message message = parseMessage(line);
+                        client.setLastMessage(message);
                     }
                 }
             } catch (IOException ex) {
@@ -65,15 +66,15 @@ public class ProtocolHandler implements Runnable {
         Enumeration splitted = MStrings.splitString(clientMessage, ":s").elements();
         while (splitted.hasMoreElements()) {
             String token = splitted.nextElement().toString();
-            if (MStrings.contains(token, "from")) {
+            if (MStrings.contains(token, "from=")) {
                 message.setFrom(token.substring((token.indexOf("=") + 1), token.length()));
-            } else if (MStrings.contains(token, "to")) {
+            } else if (MStrings.contains(token, "to=")) {
                 message.setTo(token.substring((token.indexOf("=") + 1), token.length()));
-            } else if (MStrings.contains(token, "date")) {
+            } else if (MStrings.contains(token, "date=")) {
                 long dateInMillis = Long.parseLong(token.substring((token.indexOf("=") + 1), token.length()));
                 Date date = new Date(dateInMillis);
                 message.setTime(date);
-            } else if(MStrings.contains(token, "msg")) {
+            } else if(MStrings.contains(token, "msg=")) {
                 message.setMsg(token.substring((token.indexOf("=") + 1), token.length()));
             }
         }

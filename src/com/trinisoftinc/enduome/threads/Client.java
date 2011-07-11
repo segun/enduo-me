@@ -23,7 +23,7 @@ import javax.microedition.io.SocketConnection;
 public class Client implements Runnable {
 
     private String url;
-    public Vector onlineList, messageList;
+    public Vector onlineList, messageList, chatList;
     private Message lastMessage;
     public boolean isRunning = false;
     EnduoMe parent;
@@ -33,6 +33,7 @@ public class Client implements Runnable {
         this.parent = parent;
         onlineList = new Vector();
         messageList = new Vector();
+        chatList = new Vector();
     }
 
     public void start() {
@@ -47,10 +48,26 @@ public class Client implements Runnable {
         this.onlineList = newList;
     }
 
+    public void updateChatList(String chatUser) {
+        if(!chatList.contains(chatUser)) {
+            chatList.addElement(chatUser);
+        }
+    }
+
     public void setLastMessage(Message lastMessage) {
         this.lastMessage = lastMessage;
         messageList.addElement(lastMessage);
+        updateChatList(lastMessage.getFrom());
+        parent.homeForm.alertNewMessage(lastMessage);
         showMessages();
+    }
+
+    private void showMessages() {
+        Enumeration msgEnumeration = messageList.elements();
+        while (msgEnumeration.hasMoreElements()) {
+            Message m = (Message) msgEnumeration.nextElement();
+            System.out.println(m.toNamedString());
+        }
     }
 
     public void run() {
@@ -72,14 +89,6 @@ public class Client implements Runnable {
             new ProtocolHandler(this, reader, writer).start();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void showMessages() {
-        Enumeration msgEnumeration = messageList.elements();
-        while (msgEnumeration.hasMoreElements()) {
-            Message m = (Message) msgEnumeration.nextElement();
-            System.out.println(m.toNamedString());
         }
     }
 }
