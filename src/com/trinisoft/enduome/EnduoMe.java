@@ -6,6 +6,7 @@ package com.trinisoft.enduome;
 
 import com.sun.lwuit.Button;
 import com.sun.lwuit.Command;
+import com.sun.lwuit.Container;
 import com.sun.lwuit.Dialog;
 import com.sun.lwuit.Display;
 import com.sun.lwuit.Image;
@@ -48,6 +49,7 @@ public class EnduoMe extends MIDlet {
 
     public HomeForm homeForm;
     public Client client;
+    public static Container current;
 
     String newVersion, thisVersion = "1.0";
 
@@ -165,7 +167,9 @@ public class EnduoMe extends MIDlet {
     private void initForms() {
         homeForm = new HomeForm(this);
         LoginForm loginForm = new LoginForm(this);
-        loginForm.show();
+        //loginForm.show();
+        current = homeForm;
+        homeForm.show();
     }
 
     public void pauseApp() {

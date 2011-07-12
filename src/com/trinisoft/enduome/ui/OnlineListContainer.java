@@ -4,14 +4,13 @@
  */
 package com.trinisoft.enduome.ui;
 
-import com.sun.lwuit.Button;
-import com.sun.lwuit.Command;
-import com.sun.lwuit.Component;
 import com.sun.lwuit.Container;
-import com.sun.lwuit.Label;
 import com.sun.lwuit.List;
+import com.sun.lwuit.events.ActionEvent;
+import com.sun.lwuit.events.ActionListener;
+import com.sun.lwuit.events.SelectionListener;
 import com.sun.lwuit.layouts.BorderLayout;
-import com.sun.lwuit.list.ListCellRenderer;
+import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import java.util.Vector;
 
@@ -19,13 +18,13 @@ import java.util.Vector;
  *
  * @author trinisoftinc
  */
-public class OnlineListForm extends Container {
+public class OnlineListContainer extends Container {
 
     EnduoMe parent;
     Vector onlineVector;
     List online = null;
 
-    public OnlineListForm(EnduoMe parent) {
+    public OnlineListContainer(EnduoMe parent) {
         setLayout(new BorderLayout());
         this.parent = parent;
         init();
@@ -36,6 +35,7 @@ public class OnlineListForm extends Container {
         onlineVector = parent.client.onlineList;
         online = new List(onlineVector);
         online.setListCellRenderer(new Renderers.ButtonRenderer());
+
         addComponent(BorderLayout.CENTER, online);
     }
 }

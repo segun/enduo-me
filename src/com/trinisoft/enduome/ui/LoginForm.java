@@ -91,7 +91,10 @@ public class LoginForm extends BaseForm {
                             u.setEmail(emailField.getText());
                             new StoreDecorator(u).save(EntityConstants.USER_STORE);
                             //showMessageDialog("Success", "User Registration Successfull", true);
-                            new HomeForm(parent).show();
+
+                            HomeForm homeForm = new HomeForm(parent);
+                            parent.current = homeForm;
+                            homeForm.show();
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

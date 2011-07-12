@@ -44,7 +44,6 @@ public class ProtocolHandler implements Runnable {
             try {
                 String line = reader.readLine();
                 if (line != null) {
-                    Echo.outln(line);
                     if (line.startsWith("clients:")) {
                         line = MStrings.replace(line, "clients:", "");
                         client.updateClientsList(MStrings.splitString(line, ","));

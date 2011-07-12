@@ -49,6 +49,10 @@ public class Message {
         this.to = to;
     }
 
+    public String toLWUITString() {
+        return "";
+    }
+
     public String toNamedString() {
         return "<a name='curpos'><i>" + this.getTime() + "</i> <b style='color:green'>from " + this.getFrom() + "</b> " +
                 "<b style='color:red'>to " + this.getTo() + "</b><br />" +

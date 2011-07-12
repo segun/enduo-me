@@ -23,7 +23,7 @@ import javax.microedition.io.SocketConnection;
 public class Client implements Runnable {
 
     private String url;
-    public Vector onlineList, messageList, chatList;
+    public Vector onlineList, messageList, chattersList;
     private Message lastMessage;
     public boolean isRunning = false;
     EnduoMe parent;
@@ -33,7 +33,7 @@ public class Client implements Runnable {
         this.parent = parent;
         onlineList = new Vector();
         messageList = new Vector();
-        chatList = new Vector();
+        chattersList = new Vector();
     }
 
     public void start() {
@@ -46,11 +46,12 @@ public class Client implements Runnable {
 
     public void updateClientsList(Vector newList) {
         this.onlineList = newList;
+        parent.homeForm.updateClientsList();
     }
 
     public void updateChatList(String chatUser) {
-        if(!chatList.contains(chatUser)) {
-            chatList.addElement(chatUser);
+        if(!chattersList.contains(chatUser)) {
+            chattersList.addElement(chatUser);
         }
     }
 
@@ -58,16 +59,7 @@ public class Client implements Runnable {
         this.lastMessage = lastMessage;
         messageList.addElement(lastMessage);
         updateChatList(lastMessage.getFrom());
-        parent.homeForm.alertNewMessage(lastMessage);
-        showMessages();
-    }
-
-    private void showMessages() {
-        Enumeration msgEnumeration = messageList.elements();
-        while (msgEnumeration.hasMoreElements()) {
-            Message m = (Message) msgEnumeration.nextElement();
-            System.out.println(m.toNamedString());
-        }
+        parent.homeForm.doNewMessage(lastMessage);
     }
 
     public void run() {
@@ -80,11 +72,9 @@ public class Client implements Runnable {
             BufferedWriter writer = new BufferedWriter(os);
 
             String clientDetails = "details:port=" + connection.getLocalPort() + ":sname=" + "Mobility" + ":saddress=" + connection.getLocalAddress();
-            System.out.println(clientDetails);
             writer.write(clientDetails, true);
             writer.flush();
 
-            Echo.outln("flushed");
             BufferedReader reader = new BufferedReader(is);
             new ProtocolHandler(this, reader, writer).start();
         } catch (Exception e) {
