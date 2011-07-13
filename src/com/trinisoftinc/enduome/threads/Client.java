@@ -64,6 +64,7 @@ public class Client implements Runnable {
 
     public void run() {
         try {
+            String myName = parent.loggedInUser.getUsername();
             Echo.outln("In RUN: tryeing to connect");
             SocketConnection connection = (SocketConnection) Connector.open(url);
             InputStream is = connection.openInputStream();
@@ -71,7 +72,7 @@ public class Client implements Runnable {
             Echo.outln("In RUN: cnnected");
             BufferedWriter writer = new BufferedWriter(os);
 
-            String clientDetails = "details:port=" + connection.getLocalPort() + ":sname=" + "Mobility" + ":saddress=" + connection.getLocalAddress();
+            String clientDetails = "details:port=" + connection.getLocalPort() + ":sname=" + myName + ":saddress=" + connection.getLocalAddress();
             writer.write(clientDetails, true);
             writer.flush();
 

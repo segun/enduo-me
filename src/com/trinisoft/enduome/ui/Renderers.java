@@ -23,48 +23,6 @@ import com.trinisoft.enduome.models.Message;
  */
 public final class Renderers {
 
-    public static class SingleChatRenderer implements ListCellRenderer {
-
-        String owner;
-
-        public SingleChatRenderer(String owner) {
-            this.owner = owner;
-        }
-
-        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
-            Message message = (Message) value;
-
-            Container container = new Container(new BorderLayout());
-
-            Label nameLabel = new Label(message.getFrom());
-            nameLabel.getStyle().setBgColor(0x4AA02C);
-            nameLabel.animate();
-            nameLabel.setScrollAnimationSpeed(500);
-
-            TextArea area = new TextArea(message.getMsg());
-            area.setRows(2);
-            area.setGrowByContent(true);
-            area.setEditable(false);
-            area.setIsScrollVisible(true);
-
-            container.addComponent(BorderLayout.NORTH, nameLabel);
-            container.addComponent(BorderLayout.CENTER, area);
-
-            if (isSelected) {
-                area.setFocus(true);
-                area.setEditable(true);
-                area.getStyle().setBorder(Border.createBevelRaised());
-            }
-            Echo.outln(area.getActualRows() + "");
-            return container;
-
-        }
-
-        public Component getListFocusComponent(List list) {
-            return null;
-        }
-    }
-
     public static class ButtonRenderer implements ListCellRenderer {
 
         public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {

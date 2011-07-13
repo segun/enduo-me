@@ -6,6 +6,7 @@ package com.trinisoft.enduome.ui;
 
 import com.sun.lwuit.Button;
 import com.sun.lwuit.Command;
+import com.sun.lwuit.Display;
 import com.sun.lwuit.TextField;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
@@ -14,7 +15,6 @@ import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.entities.EntityConstants;
 import com.trinisoft.enduome.entities.User;
 import com.trinisoft.mlib.views.BaseForm;
-import org.w3c.dom.Entity;
 
 /**
  *
@@ -81,8 +81,8 @@ public class LoginForm extends BaseForm {
                             u.setAddress(addressField.getText());
                             try {
                                 u.setAge(Integer.parseInt(ageField.getText()));
-                            } catch(NumberFormatException nfe) {
-                                if(ageField.getText().length() > 0) {
+                            } catch (NumberFormatException nfe) {
+                                if (ageField.getText().length() > 0) {
                                     showMessageDialog("Error", "Please enter a valid age", true);
                                 } else {
                                     u.setAge(0);
@@ -92,6 +92,13 @@ public class LoginForm extends BaseForm {
                             new StoreDecorator(u).save(EntityConstants.USER_STORE);
                             //showMessageDialog("Success", "User Registration Successfull", true);
 
+                            parent.loggedInUser = u;
+                            Display.getInstance().callSerially(new Runnable() {
+
+                                public void run() {
+                                    parent.startChat();
+                                }
+                            });
                             HomeForm homeForm = new HomeForm(parent);
                             parent.current = homeForm;
                             homeForm.show();

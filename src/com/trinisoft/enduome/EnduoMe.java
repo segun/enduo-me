@@ -20,6 +20,8 @@ import com.sun.lwuit.util.Log;
 import com.sun.lwuit.util.Resources;
 import com.trinisoft.baselib.io.HttpPull;
 import com.trinisoft.baselib.util.Echo;
+import com.trinisoft.enduome.entities.EntityConstants;
+import com.trinisoft.enduome.entities.User;
 import com.trinisoft.enduome.ui.HomeForm;
 import com.trinisoft.enduome.ui.LoginForm;
 import com.trinisoft.mlib.util.URLConstants;
@@ -35,7 +37,6 @@ import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import org.json.me.JSONObject;
 
-
 /**
  * @author trinisoftinc
  */
@@ -46,14 +47,13 @@ public class EnduoMe extends MIDlet {
     Label imageLabel;
     Image advertImage;
     Dialog advertDialog;
-
     public HomeForm homeForm;
     public Client client;
     public static Container current;
-
+    public static User loggedInUser;
     String newVersion, thisVersion = "1.0";
-
     CommonTransitions in = CommonTransitions.createFade(500);
+    public static final String server = "socket://localhost:1981";
 
     public void startApp() {
         Display.init(this);
@@ -69,19 +69,22 @@ public class EnduoMe extends MIDlet {
             notifyDestroyed();
         }
 
-        client = new Client("socket://localhost:1981", this);
+        client = new Client(server, this);
 
         Display.getInstance().callSerially(new Runnable() {
 
             public void run() {
-                initForms();
+                try {
+                    initForms();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         new Thread() {
 
             public void run() {
-                    //doNewVersion();
-                startChat();
+                //doNewVersion();
             }
         }.start();
     }
@@ -164,12 +167,31 @@ public class EnduoMe extends MIDlet {
         return false;
     }
 
-    private void initForms() {
+    private void initForms() throws Exception {
         homeForm = new HomeForm(this);
         LoginForm loginForm = new LoginForm(this);
-        //loginForm.show();
-        current = homeForm;
-        homeForm.show();
+
+        if (EntityConstants.USER_STORE.getNumRecords() <= 0) {
+            current = loginForm;
+            loginForm.show();
+        } else {
+            User u = new User();
+
+            RecordEnumeration re = EntityConstants.USER_STORE.enumerateRecords(null, null, true);
+            if (re.hasNextElement()) {
+                u.fromJSONString(new String(re.nextRecord()));
+            }
+            loggedInUser = u;
+            current = homeForm;
+            homeForm.show();
+
+            Display.getInstance().callSerially(new Runnable() {
+
+                public void run() {
+                    startChat();
+                }
+            });
+        }
     }
 
     public void pauseApp() {
@@ -178,12 +200,12 @@ public class EnduoMe extends MIDlet {
     public void destroyApp(boolean unconditional) {
     }
 
-    private void startChat() {
+    public void startChat() {
         client.start();
     }
 
     private void readAdverts() {
-       final MIDlet me = this;
+        final MIDlet me = this;
         new Thread() {
 
             public void run() {

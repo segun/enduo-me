@@ -9,7 +9,6 @@ import com.trinisoft.baselib.db.BaseStoreImpl;
 import java.io.IOException;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
-import javax.obex.PasswordAuthentication;
 import org.json.me.JSONObject;
 
 /**
@@ -57,9 +56,9 @@ public class User extends BaseStoreImpl {
         JSONObject object = new JSONObject();
         object.put("id", id);
         object.put("username", username);
-        object.put("email", email);
+        object.put("email", email.length() <= 0 ? "Not Yet Provided" : email);
         object.put("age", age);
-        object.put("address", address);
+        object.put("address", address.length() <= 0 ? "Not Yet Provided" : address);
 
         return object.toString();
     }

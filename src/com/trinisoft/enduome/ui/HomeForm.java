@@ -8,14 +8,18 @@ import com.sun.lwuit.Button;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.Container;
 import com.sun.lwuit.Dialog;
+import com.sun.lwuit.TextField;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.layouts.BorderLayout;
+import com.sun.lwuit.layouts.BoxLayout;
 import com.sun.lwuit.layouts.FlowLayout;
+import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
 import com.trinisoft.mlib.views.BaseForm;
 import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  *
@@ -33,6 +37,32 @@ public class HomeForm extends BaseForm {
     private static Hashtable chats = new Hashtable();
     public static final int SHOW_ONLINE_LIST_FORM = 0;
     public static final int SHOW_CHAT_LIST_FORM = 1;
+    public static final int SUBMIT_CHAT_ACTION = 2;
+    public static Vector formerOnlineList;
+
+    private TextField myChatsField;
+    Container sendChatContainer;
+
+    private boolean vectorEquals(Vector vec1, Vector vec2) {
+        int s1 = vec1.size();
+        int s2 = vec2.size();
+        if (s1 == s2) {
+            for (int i = 0; i < s1; i++) {
+                if (!vec2.contains(vec1.elementAt(i))) {
+                    return false;
+                }
+            }
+
+            for (int j = 0; j < s2; j++) {
+                if (!vec1.contains(vec2.elementAt(j))) {
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
 
     public HomeForm(EnduoMe parent) {
         super(parent);
@@ -55,8 +85,17 @@ public class HomeForm extends BaseForm {
     }
 
     public void updateClientsList() {
-        if (EnduoMe.current instanceof OnlineListContainer || EnduoMe.current instanceof HomeForm) {
-            showForm(ONLINE_LIST_SHOW_STRING);
+        if (formerOnlineList == null) {
+            formerOnlineList = parent.client.onlineList;
+            if (EnduoMe.current instanceof OnlineListContainer || EnduoMe.current instanceof HomeForm) {
+                showForm(ONLINE_LIST_SHOW_STRING);
+            }
+        } else if (vectorEquals(formerOnlineList, parent.client.onlineList)) {
+        } else if (!vectorEquals(formerOnlineList, parent.client.onlineList)) {
+            formerOnlineList = parent.client.onlineList;
+            if (EnduoMe.current instanceof OnlineListContainer || EnduoMe.current instanceof HomeForm) {
+                showForm(ONLINE_LIST_SHOW_STRING);
+            }
         }
     }
 
@@ -81,6 +120,9 @@ public class HomeForm extends BaseForm {
         String from = message.getFrom();
         boolean show = Dialog.show("New Message from " + from, message.getMsg(), "View Message", "Cancel");
         if (show) {
+            if (chattersListContainer == null) {
+                chattersListContainer = new ChattersListContainer(parent, new ChattersListCommander());
+            }
             chattersListContainer.setSelectedItem(from);
             showForm(CHATS_FORM_SHOW_STRING);
         }
@@ -91,18 +133,31 @@ public class HomeForm extends BaseForm {
         setLayout(new BorderLayout());
         Command c = new Command("Online", SHOW_ONLINE_LIST_FORM);
         Command d = new Command("Chat List", SHOW_CHAT_LIST_FORM);
+        Command e = new Command("Send", SUBMIT_CHAT_ACTION);
         Container menu = new Container(new FlowLayout());
         menu.addComponent(new Button(c));
         menu.addComponent(new Button(d));
         addCommand(c);
-        addCommandListener(new HomeFormCommander());
+        addCommand(d);
+        addCommand(e);
 
         addComponent(BorderLayout.NORTH, menu);
         addComponent(BorderLayout.CENTER, (onlineListForm = new OnlineListContainer(parent)));
+        myChatsField = new TextField("");
+
+        sendChatContainer = new Container(new BoxLayout(BoxLayout.X_AXIS));
+        sendChatContainer.addComponent(myChatsField);
+        sendChatContainer.addComponent(new Button(e));
+        sendChatContainer.setVisible(false);
+
+        addComponent(BorderLayout.SOUTH, sendChatContainer);
+
+        addCommandListener(new HomeFormCommander());
     }
 
     public void showForm(String whichForm) {
         ChattersListCommander chattersListCommander = new ChattersListCommander();
+        sendChatContainer.setVisible(false);
         if (whichForm.equals(ONLINE_LIST_SHOW_STRING)) {
             if (contains(onlineListForm)) {
                 replace(onlineListForm, (onlineListForm = new OnlineListContainer(parent)), in);
@@ -122,9 +177,9 @@ public class HomeForm extends BaseForm {
             }
             EnduoMe.current = chattersListContainer;
         } else if (whichForm.equals(CHATS_FORM_SHOW_STRING)) {
+            sendChatContainer.setVisible(true);
             String from = chattersListContainer.getSelectedItem();
             ChatsContainer container = (ChatsContainer) chats.get(from);
-            System.out.println(from + " : " + container + ", " + chats.size() + " : " + chats);
             if (contains(chattersListContainer)) {
                 aChat = container;
                 replace(chattersListContainer, aChat, in);
@@ -148,6 +203,9 @@ public class HomeForm extends BaseForm {
                     break;
                 case SHOW_CHAT_LIST_FORM:
                     showForm(CHATTERS_LIST_SHOW_STRING);
+                    break;
+                case SUBMIT_CHAT_ACTION:
+                    Echo.outln("Sending chat out");
                     break;
             }
         }
