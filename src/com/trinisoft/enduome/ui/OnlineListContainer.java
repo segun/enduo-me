@@ -8,9 +8,7 @@ import com.sun.lwuit.Container;
 import com.sun.lwuit.List;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
-import com.sun.lwuit.events.SelectionListener;
 import com.sun.lwuit.layouts.BorderLayout;
-import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import java.util.Vector;
 
@@ -34,6 +32,22 @@ public class OnlineListContainer extends Container {
         setLayout(new BorderLayout());
         onlineVector = parent.client.onlineList;
         online = new List(onlineVector);
+        online.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                String selectedItem = online.getSelectedItem().toString();
+                parent.client.updateChatList(selectedItem);
+
+                if (parent.homeForm.chattersListContainer == null) {
+                    parent.homeForm.chattersListContainer = new ChattersListContainer(parent, new ChattersListCommander(parent));
+                } else {
+                    parent.homeForm.chattersListContainer.chatters.addItem(selectedItem);
+                }
+                parent.homeForm.chattersListContainer.setSelectedItem(selectedItem);
+                
+                parent.homeForm.showForm(HomeForm.CHATS_FORM_SHOW_STRING);
+            }
+        });
         online.setListCellRenderer(new Renderers.ButtonRenderer());
 
         addComponent(BorderLayout.CENTER, online);

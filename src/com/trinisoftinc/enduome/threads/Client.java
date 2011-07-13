@@ -9,9 +9,10 @@ import com.trinisoft.baselib.io.BufferedWriter;
 import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Enumeration;
+import java.io.OutputStreamWriter;
 import java.util.Vector;
 import javax.microedition.io.Connector;
 import javax.microedition.io.SocketConnection;
@@ -27,6 +28,7 @@ public class Client implements Runnable {
     private Message lastMessage;
     public boolean isRunning = false;
     EnduoMe parent;
+    BufferedWriter writer;
 
     public Client(String url, EnduoMe parent) {
         this.url = url;
@@ -41,6 +43,20 @@ public class Client implements Runnable {
             Thread t = new Thread(this);
             t.start();
             isRunning = true;
+        }
+    }
+
+    public void sendMessage(Message message) throws Exception {
+        String sendThis = "message:from=" + message.getFrom() + ":s" +
+                "to=" + message.getTo() + ":s" +
+                "date=" + message.getTime().getTime() + ":s" +
+                "msg=" + message.getMsg() + "\n";
+        try {
+            writer.write(sendThis, true);
+            writer.flush();
+            setLastMessage(message);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 
@@ -70,7 +86,7 @@ public class Client implements Runnable {
             InputStream is = connection.openInputStream();
             OutputStream os = connection.openOutputStream();
             Echo.outln("In RUN: cnnected");
-            BufferedWriter writer = new BufferedWriter(os);
+            writer = new BufferedWriter(os);
 
             String clientDetails = "details:port=" + connection.getLocalPort() + ":sname=" + myName + ":saddress=" + connection.getLocalAddress();
             writer.write(clientDetails, true);

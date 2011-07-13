@@ -38,6 +38,10 @@ public class ChattersListContainer extends Container {
         chatters.setSelectedItem(item);
     }
 
+    public void addItem(String item) {
+        chatters.addItem(item);
+    }
+
     private void init() {
         setLayout(new BorderLayout());
         chatList = parent.client.chattersList;

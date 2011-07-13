@@ -12,8 +12,7 @@ import com.sun.lwuit.TextField;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.layouts.BorderLayout;
-import com.sun.lwuit.layouts.BoxLayout;
-import com.sun.lwuit.layouts.FlowLayout;
+import com.trinisoft.baselib.util.Date;
 import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
@@ -29,17 +28,17 @@ public class HomeForm extends BaseForm {
 
     private EnduoMe parent;
     private OnlineListContainer onlineListForm;
-    private ChattersListContainer chattersListContainer;
+    public ChattersListContainer chattersListContainer;
     private ChatsContainer aChat;
     private static final String ONLINE_LIST_SHOW_STRING = "online_list_form";
     private static final String CHATTERS_LIST_SHOW_STRING = "chatters_list_form";
-    private static final String CHATS_FORM_SHOW_STRING = "chats_form";
+    public static final String CHATS_FORM_SHOW_STRING = "chats_form";
     private static Hashtable chats = new Hashtable();
-    public static final int SHOW_ONLINE_LIST_FORM = 0;
-    public static final int SHOW_CHAT_LIST_FORM = 1;
-    public static final int SUBMIT_CHAT_ACTION = 2;
+    public static final int SHOW_ONLINE_LIST_FORM = 100;
+    public static final int SHOW_CHAT_LIST_FORM = 101;
+    public static final int SUBMIT_CHAT_ACTION = 102;
     public static Vector formerOnlineList;
-
+    private String currentTo;
     private TextField myChatsField;
     Container sendChatContainer;
 
@@ -72,6 +71,19 @@ public class HomeForm extends BaseForm {
 
     public void doNewMessage(Message message) {
         String from = message.getFrom();
+        String you = EnduoMe.loggedInUser.getUsername();
+
+        if (from.equals(you)) {
+            if (EnduoMe.current instanceof ChatsContainer) {
+                ChatsContainer meChat = (ChatsContainer) EnduoMe.current;
+                meChat.addChat(message);
+                myChatsField.setText("");
+            } else {
+                //do nothing
+            }
+            return;
+        }
+
         if (chats.containsKey(from)) {
             ChatsContainer container = (ChatsContainer) chats.get(from);
             container.addChat(message);
@@ -108,7 +120,7 @@ public class HomeForm extends BaseForm {
         } else if (EnduoMe.current instanceof ChatsContainer) {
             ChatsContainer oneChat = (ChatsContainer) EnduoMe.current;
             String from = message.getFrom();
-            if (oneChat.from.equals(from)) {
+            if (oneChat.from.equals(from) || parent.loggedInUser.getUsername().equals(from)) {
                 //do nothing
             } else {
                 showAlert(message);
@@ -121,7 +133,7 @@ public class HomeForm extends BaseForm {
         boolean show = Dialog.show("New Message from " + from, message.getMsg(), "View Message", "Cancel");
         if (show) {
             if (chattersListContainer == null) {
-                chattersListContainer = new ChattersListContainer(parent, new ChattersListCommander());
+                chattersListContainer = new ChattersListContainer(parent, new ChattersListCommander(parent));
             }
             chattersListContainer.setSelectedItem(from);
             showForm(CHATS_FORM_SHOW_STRING);
@@ -134,31 +146,69 @@ public class HomeForm extends BaseForm {
         Command c = new Command("Online", SHOW_ONLINE_LIST_FORM);
         Command d = new Command("Chat List", SHOW_CHAT_LIST_FORM);
         Command e = new Command("Send", SUBMIT_CHAT_ACTION);
-        Container menu = new Container(new FlowLayout());
-        menu.addComponent(new Button(c));
-        menu.addComponent(new Button(d));
-        addCommand(c);
-        addCommand(d);
-        addCommand(e);
 
-        addComponent(BorderLayout.NORTH, menu);
-        addComponent(BorderLayout.CENTER, (onlineListForm = new OnlineListContainer(parent)));
         myChatsField = new TextField("");
 
-        sendChatContainer = new Container(new BoxLayout(BoxLayout.X_AXIS));
-        sendChatContainer.addComponent(myChatsField);
-        sendChatContainer.addComponent(new Button(e));
+        myChatsField.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                try {
+                    sendMessage();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+
+        sendChatContainer = new Container(new BorderLayout());
+        sendChatContainer.addComponent(BorderLayout.CENTER, myChatsField);
+        sendChatContainer.addComponent(BorderLayout.EAST, new Button(e));
+
+        addCommand(c);
+        //addCommand(d);
+
+        addComponent(BorderLayout.NORTH, sendChatContainer);
+        addComponent(BorderLayout.CENTER, (onlineListForm = new OnlineListContainer(parent)));
+
         sendChatContainer.setVisible(false);
-
-        addComponent(BorderLayout.SOUTH, sendChatContainer);
-
         addCommandListener(new HomeFormCommander());
+
+        addKeyListener(82, new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                setScrollY(0);
+                myChatsField.setFocus(true);
+            }
+        });
+
+        addKeyListener(114, new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                setScrollY(0);
+                myChatsField.setFocus(true);
+            }
+        });
+    }
+
+    private void sendMessage() throws Exception {
+        if (myChatsField.getText().length() <= 0) {
+            Dialog.show("Error", "Please type a message.", "OK", "");
+            return;
+        } else {
+            Message message = new Message();
+            message.setFrom(parent.loggedInUser.getUsername());
+            message.setTo(currentTo);
+            message.setTime(new Date());
+            message.setMsg(myChatsField.getText());
+            parent.client.sendMessage(message);
+        }
     }
 
     public void showForm(String whichForm) {
-        ChattersListCommander chattersListCommander = new ChattersListCommander();
+        ChattersListCommander chattersListCommander = new ChattersListCommander(parent);
         sendChatContainer.setVisible(false);
         if (whichForm.equals(ONLINE_LIST_SHOW_STRING)) {
+            setTitle("EnduoMe - Online Now!");
             if (contains(onlineListForm)) {
                 replace(onlineListForm, (onlineListForm = new OnlineListContainer(parent)), in);
             } else if (contains(chattersListContainer)) {
@@ -168,6 +218,7 @@ public class HomeForm extends BaseForm {
             }
             EnduoMe.current = onlineListForm;
         } else if (whichForm.equals(CHATTERS_LIST_SHOW_STRING)) {
+            setTitle("EnduoMe - You are chatting with ");
             if (contains(chattersListContainer)) {
                 replace(chattersListContainer, (chattersListContainer = new ChattersListContainer(parent, chattersListCommander)), in);
             } else if (contains(onlineListForm)) {
@@ -179,7 +230,15 @@ public class HomeForm extends BaseForm {
         } else if (whichForm.equals(CHATS_FORM_SHOW_STRING)) {
             sendChatContainer.setVisible(true);
             String from = chattersListContainer.getSelectedItem();
-            ChatsContainer container = (ChatsContainer) chats.get(from);
+            setTitle("EnduoMe - Chat with " + from);
+            currentTo = from;
+            ChatsContainer container = null;
+            if (chats.get(from) == null) {
+                container = new ChatsContainer(parent, from);
+                chats.put(from, container);
+            } else {
+                container = (ChatsContainer) chats.get(from);
+            }
             if (contains(chattersListContainer)) {
                 aChat = container;
                 replace(chattersListContainer, aChat, in);
@@ -205,16 +264,13 @@ public class HomeForm extends BaseForm {
                     showForm(CHATTERS_LIST_SHOW_STRING);
                     break;
                 case SUBMIT_CHAT_ACTION:
-                    Echo.outln("Sending chat out");
+                    try {
+                        sendMessage();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                     break;
             }
-        }
-    }
-
-    private class ChattersListCommander implements ActionListener {
-
-        public void actionPerformed(ActionEvent ae) {
-            showForm(CHATS_FORM_SHOW_STRING);
         }
     }
 }

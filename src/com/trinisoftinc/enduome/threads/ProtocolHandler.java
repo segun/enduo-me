@@ -53,7 +53,8 @@ public class ProtocolHandler implements Runnable {
                         client.setLastMessage(message);
                     }
                 }
-            } catch (IOException ex) {
+                Thread.sleep(2000);
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
