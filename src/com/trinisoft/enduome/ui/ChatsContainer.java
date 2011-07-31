@@ -49,11 +49,11 @@ public class ChatsContainer extends Container {
             if (messageFrom.equals(you)) {
                 nameLabel.setText("YOU");
                 nameLabel.getStyle().setBgColor(0x657300);
-                area.getUnselectedStyle().setBgColor(0x657300);
+                //area.getUnselectedStyle().setBgColor(0x657300);
             } else {
                 nameLabel.setText(from);
                 nameLabel.getStyle().setBgColor(0x657383);
-                area.getUnselectedStyle().setBgColor(0x657383);
+                //area.getUnselectedStyle().setBgColor(0x657383);
             }
 
             oneMessageContainer.addComponent(BorderLayout.NORTH, nameLabel);
@@ -68,7 +68,8 @@ public class ChatsContainer extends Container {
 
             area.getUnselectedStyle().setBorder(Border.createBevelLowered());
             area.getUnselectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
-            area.getUnselectedStyle().setFgColor(0xffffff);
+            area.getUnselectedStyle().setFgColor(0x657383);
+            //area.getUnselectedStyle().setFgColor(0xffffff);
 
             chatContainer.addComponent(oneMessageContainer);
 

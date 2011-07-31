@@ -53,7 +53,7 @@ public class EnduoMe extends MIDlet {
     public static User loggedInUser;
     String newVersion, thisVersion = "1.0";
     CommonTransitions in = CommonTransitions.createFade(500);
-    public static final String server = "socket://localhost:1981";
+    public static final String server = "socket://unotifier.com:1981";
 
     public void startApp() {
         Display.init(this);

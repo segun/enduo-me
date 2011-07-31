@@ -13,7 +13,6 @@ import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.layouts.BorderLayout;
 import com.trinisoft.baselib.util.Date;
-import com.trinisoft.baselib.util.Echo;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
 import com.trinisoft.mlib.views.BaseForm;
@@ -27,6 +26,7 @@ import java.util.Vector;
 public class HomeForm extends BaseForm {
 
     private EnduoMe parent;
+    private Button sendButton;
     private OnlineListContainer onlineListForm;
     public ChattersListContainer chattersListContainer;
     private ChatsContainer aChat;
@@ -147,6 +147,7 @@ public class HomeForm extends BaseForm {
         Command d = new Command("Chat List", SHOW_CHAT_LIST_FORM);
         Command e = new Command("Send", SUBMIT_CHAT_ACTION);
 
+        sendButton = new Button(e);
         myChatsField = new TextField("");
 
         myChatsField.addActionListener(new ActionListener() {
@@ -162,7 +163,9 @@ public class HomeForm extends BaseForm {
 
         sendChatContainer = new Container(new BorderLayout());
         sendChatContainer.addComponent(BorderLayout.CENTER, myChatsField);
-        sendChatContainer.addComponent(BorderLayout.EAST, new Button(e));
+        sendChatContainer.addComponent(BorderLayout.EAST, sendButton);
+        myChatsField.setVisible(false);
+        sendButton.setVisible(false);
 
         addCommand(c);
         //addCommand(d);
@@ -170,7 +173,6 @@ public class HomeForm extends BaseForm {
         addComponent(BorderLayout.NORTH, sendChatContainer);
         addComponent(BorderLayout.CENTER, (onlineListForm = new OnlineListContainer(parent)));
 
-        sendChatContainer.setVisible(false);
         addCommandListener(new HomeFormCommander());
 
         addKeyListener(82, new ActionListener() {
@@ -206,7 +208,9 @@ public class HomeForm extends BaseForm {
 
     public void showForm(String whichForm) {
         ChattersListCommander chattersListCommander = new ChattersListCommander(parent);
-        sendChatContainer.setVisible(false);
+        //sendChatContainer.setVisible(false);
+        myChatsField.setVisible(false);
+        sendButton.setVisible(false);
         if (whichForm.equals(ONLINE_LIST_SHOW_STRING)) {
             setTitle("EnduoMe - Online Now!");
             if (contains(onlineListForm)) {
@@ -228,7 +232,9 @@ public class HomeForm extends BaseForm {
             }
             EnduoMe.current = chattersListContainer;
         } else if (whichForm.equals(CHATS_FORM_SHOW_STRING)) {
-            sendChatContainer.setVisible(true);
+            //sendChatContainer.setVisible(true);
+            myChatsField.setVisible(true);
+            sendButton.setVisible(true);
             String from = chattersListContainer.getSelectedItem();
             setTitle("EnduoMe - Chat with " + from);
             currentTo = from;
