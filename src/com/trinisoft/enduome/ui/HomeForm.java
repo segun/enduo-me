@@ -222,13 +222,19 @@ public class HomeForm extends BaseForm {
             }
             EnduoMe.current = onlineListForm;
         } else if (whichForm.equals(CHATTERS_LIST_SHOW_STRING)) {
+            System.out.println("I reach here!!!!!");
             setTitle("EnduoMe - You are chatting with ");
             if (contains(chattersListContainer)) {
+                System.out.println("1");
                 replace(chattersListContainer, (chattersListContainer = new ChattersListContainer(parent, chattersListCommander)), in);
             } else if (contains(onlineListForm)) {
+                System.out.println("2");
                 replace(onlineListForm, (chattersListContainer = new ChattersListContainer(parent, chattersListCommander)), in);
             } else if (contains(aChat)) {
+                System.out.println("3");
                 replace(aChat, (chattersListContainer = new ChattersListContainer(parent, chattersListCommander)), in);
+            } else {
+                System.out.println("4");
             }
             EnduoMe.current = chattersListContainer;
         } else if (whichForm.equals(CHATS_FORM_SHOW_STRING)) {

@@ -15,6 +15,7 @@ import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.entities.EntityConstants;
 import com.trinisoft.enduome.entities.User;
 import com.trinisoft.mlib.views.BaseForm;
+import com.trinisoft.mlib.views.XTextField;
 
 /**
  *
@@ -22,7 +23,7 @@ import com.trinisoft.mlib.views.BaseForm;
  */
 public class LoginForm extends BaseForm {
 
-    TextField nameField, ageField, addressField, emailField;
+    XTextField nameField, ageField, addressField, emailField;
     public static final int LOGIN_ACTION = 1;
     public static final int QUIT_ACTION = 2;
     EnduoMe parent;
@@ -33,20 +34,25 @@ public class LoginForm extends BaseForm {
         init();
     }
 
+    private void addWithLabel(String label, XTextField field) {
+        addLabel(label);
+        addComponent(field);
+    }
+    
     private void init() {
         setTitle("Enter your name");
-        nameField = new TextField();
+        nameField = new XTextField();
         addWithLabel("Enter you name (compulsory)", nameField);
 
-        ageField = new TextField();
+        ageField = new XTextField();
         ageField.setInputMode("123");
         ageField.setConstraint(TextField.NUMERIC);
         addWithLabel("Age: ", ageField);
 
-        addressField = new TextField();
+        addressField = new XTextField();
         addWithLabel("Address: ", addressField);
 
-        emailField = new TextField();
+        emailField = new XTextField();
         addWithLabel("Enter your email or phone number", emailField);
 
         Command loginCommand = new Command("Login", LOGIN_ACTION);
@@ -61,12 +67,14 @@ public class LoginForm extends BaseForm {
         addComponent(l);
         addComponent(q);
 
-        addCommandListener(new LoginCommander());
+        addCommandListener(new LoginCommander(this));
     }
 
     private class LoginCommander implements ActionListener {
 
-        public LoginCommander() {
+        LoginForm loginForm;
+        public LoginCommander(LoginForm loginForm) {
+            this.loginForm = loginForm;
         }
 
         public void actionPerformed(ActionEvent ae) {
@@ -83,7 +91,7 @@ public class LoginForm extends BaseForm {
                                 u.setAge(Integer.parseInt(ageField.getText()));
                             } catch (NumberFormatException nfe) {
                                 if (ageField.getText().length() > 0) {
-                                    showMessageDialog("Error", "Please enter a valid age", true);
+                                    showErrorDialog("Please enter a valid age", loginForm);
                                 } else {
                                     u.setAge(0);
                                 }
@@ -106,7 +114,7 @@ public class LoginForm extends BaseForm {
                             ex.printStackTrace();
                         }
                     } else {
-                        showMessageDialog("Error", "Please enter a username", true);
+                        showErrorDialog("Please enter a username", loginForm);
                     }
                     break;
                 case QUIT_ACTION:

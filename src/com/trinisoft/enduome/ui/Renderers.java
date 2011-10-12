@@ -7,15 +7,8 @@ package com.trinisoft.enduome.ui;
 import com.sun.lwuit.Button;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.Component;
-import com.sun.lwuit.Container;
-import com.sun.lwuit.Label;
 import com.sun.lwuit.List;
-import com.sun.lwuit.TextArea;
-import com.sun.lwuit.layouts.BorderLayout;
 import com.sun.lwuit.list.ListCellRenderer;
-import com.sun.lwuit.plaf.Border;
-import com.trinisoft.baselib.util.Echo;
-import com.trinisoft.enduome.models.Message;
 
 /**
  *

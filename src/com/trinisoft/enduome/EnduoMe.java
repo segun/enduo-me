@@ -4,13 +4,7 @@
  */
 package com.trinisoft.enduome;
 
-import com.sun.lwuit.Button;
-import com.sun.lwuit.Command;
-import com.sun.lwuit.Container;
-import com.sun.lwuit.Dialog;
-import com.sun.lwuit.Display;
-import com.sun.lwuit.Image;
-import com.sun.lwuit.Label;
+import com.sun.lwuit.*;
 import com.sun.lwuit.animations.CommonTransitions;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
@@ -25,17 +19,18 @@ import com.trinisoft.enduome.entities.User;
 import com.trinisoft.enduome.ui.HomeForm;
 import com.trinisoft.enduome.ui.LoginForm;
 import com.trinisoft.mlib.util.URLConstants;
+import com.trinisoftinc.enduome.config.Configuration;
 import com.trinisoftinc.enduome.threads.Client;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.microedition.io.ConnectionNotFoundException;
 import javax.microedition.io.Connector;
 import javax.microedition.io.HttpConnection;
-import javax.microedition.midlet.*;
+import javax.microedition.midlet.MIDlet;
 import javax.microedition.rms.RecordEnumeration;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
-import org.json.me.JSONObject;
+import trinisoftinc.json.me.MyJSONObject;
 
 /**
  * @author trinisoftinc
@@ -53,7 +48,7 @@ public class EnduoMe extends MIDlet {
     public static User loggedInUser;
     String newVersion, thisVersion = "1.0";
     CommonTransitions in = CommonTransitions.createFade(500);
-    public static final String server = "socket://unotifier.com:1981";
+    public static final String server = "socket://" + Configuration.SERVER_NAME + ":" + Configuration.SERVER_PORT;
 
     public void startApp() {
         Display.init(this);
@@ -218,7 +213,7 @@ public class EnduoMe extends MIDlet {
                     try {
                         HttpPull pull = new HttpPull();
                         String result = pull.get(URLConstants.ADS_URL, "");
-                        JSONObject object = new JSONObject(result);
+                        MyJSONObject object = new MyJSONObject(result);
                         advertButton.setText(object.getString("adtext"));
                         try {
                             HttpConnection connection = (HttpConnection) Connector.open(object.getString("adurl"));

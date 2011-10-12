@@ -80,7 +80,7 @@ public class Client implements Runnable {
     public void run() {
         try {
             String myName = parent.loggedInUser.getUsername();
-            Echo.outln("In RUN: tryeing to connect");
+            Echo.outln("In RUN: tryeing to connect to " + url);
             SocketConnection connection = (SocketConnection) Connector.open(url);
             InputStream is = connection.openInputStream();
             OutputStream os = connection.openOutputStream();

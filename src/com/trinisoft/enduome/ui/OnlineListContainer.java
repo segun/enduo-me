@@ -36,6 +36,7 @@ public class OnlineListContainer extends Container {
 
             public void actionPerformed(ActionEvent ae) {
                 String selectedItem = online.getSelectedItem().toString();
+                System.out.println("Here in OLC");
                 parent.client.updateChatList(selectedItem);
 
                 if (parent.homeForm.chattersListContainer == null) {
@@ -48,7 +49,8 @@ public class OnlineListContainer extends Container {
                 parent.homeForm.showForm(HomeForm.CHATS_FORM_SHOW_STRING);
             }
         });
-        online.setListCellRenderer(new Renderers.ButtonRenderer());
+        online.setRenderer(new Renderers.ButtonRenderer());
+        //online.setListCellRenderer(new Renderers.ButtonRenderer());
 
         addComponent(BorderLayout.CENTER, online);
     }

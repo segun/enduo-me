@@ -9,7 +9,7 @@ import com.trinisoft.baselib.db.BaseStoreImpl;
 import java.io.IOException;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
-import org.json.me.JSONObject;
+import trinisoftinc.json.me.MyJSONObject;
 
 /**
  *
@@ -32,7 +32,7 @@ public class User extends BaseStoreImpl {
     }
 
     public void fromJSONString(String json) throws Exception {
-        JSONObject object = new JSONObject(json);
+        MyJSONObject object = new MyJSONObject(json);
         id = object.getInt("id");
         username = object.getString("username");
         email = object.getString("email");
@@ -53,7 +53,7 @@ public class User extends BaseStoreImpl {
     }
 
     public String toJSONString() throws Exception {
-        JSONObject object = new JSONObject();
+        MyJSONObject object = new MyJSONObject();
         object.put("id", id);
         object.put("username", username);
         object.put("email", email.length() <= 0 ? "Not Yet Provided" : email);
