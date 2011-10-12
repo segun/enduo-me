@@ -8,7 +8,7 @@ import com.sun.lwuit.Button;
 import com.sun.lwuit.Command;
 import com.sun.lwuit.Component;
 import com.sun.lwuit.List;
-import com.sun.lwuit.list.ListCellRenderer;
+import com.sun.lwuit.list.CellRenderer;
 
 /**
  *
@@ -16,9 +16,9 @@ import com.sun.lwuit.list.ListCellRenderer;
  */
 public final class Renderers {
 
-    public static class ButtonRenderer implements ListCellRenderer {
+    public static class ButtonRenderer implements CellRenderer {
 
-        public Component getListCellRendererComponent(List list, Object value, int index, boolean isSelected) {
+        public Component getCellRendererComponent(Component list, Object model, Object value, int index, boolean isSelected) {
             Command c = new Command(String.valueOf(value), index);
             Button b = new Button(c);
             if (isSelected) {
@@ -29,9 +29,9 @@ public final class Renderers {
             }
             return b;
         }
-
-        public Component getListFocusComponent(List list) {
+        
+        public Component getFocusComponent(Component list) {
             return null;
-        }
+        }        
     }
 }

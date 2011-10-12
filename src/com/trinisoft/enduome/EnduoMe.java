@@ -65,12 +65,13 @@ public class EnduoMe extends MIDlet {
         }
 
         client = new Client(server, this);
-
+        
+        final EnduoMe me = this;
         Display.getInstance().callSerially(new Runnable() {
 
             public void run() {
                 try {
-                    initForms();
+                    initForms();                    
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -179,7 +180,7 @@ public class EnduoMe extends MIDlet {
             loggedInUser = u;
             current = homeForm;
             homeForm.show();
-
+            
             Display.getInstance().callSerially(new Runnable() {
 
                 public void run() {

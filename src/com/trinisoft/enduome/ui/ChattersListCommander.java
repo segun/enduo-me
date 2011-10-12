@@ -22,6 +22,6 @@ public class ChattersListCommander implements ActionListener {
 
 
     public void actionPerformed(ActionEvent ae) {
-        parent.homeForm.showForm(HomeForm.CHATS_FORM_SHOW_STRING);
+        //parent.homeForm.showForm(HomeForm.CHATS_FORM_SHOW_STRING);
     }
 }
