@@ -6,9 +6,12 @@ package com.trinisoft.enduome.entities;
 
 import com.trinisoft.baselib.db.BaseStore;
 import com.trinisoft.baselib.db.BaseStoreImpl;
+import com.trinisoft.baselib.db.StorableList;
+import com.trinisoft.baselib.util.Echo;
 import java.io.IOException;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
+import trinisoftinc.json.me.MyJSONArray;
 import trinisoftinc.json.me.MyJSONObject;
 
 /**
@@ -22,6 +25,7 @@ public class User extends BaseStoreImpl {
     private String username;
     private int age;
     private String address;
+    private StorableList friends = new StorableList();
 
     public boolean delete(RecordStore rs, int recordID) throws RecordStoreException {
         return super.delete(rs, recordID);
@@ -38,6 +42,7 @@ public class User extends BaseStoreImpl {
         email = object.getString("email");
         age = object.getInt("age");
         address = object.getString("address");
+        friends.fromJSONString(object.getString("friends"));        
     }
 
     public int getId() {
@@ -59,6 +64,7 @@ public class User extends BaseStoreImpl {
         object.put("email", email.length() <= 0 ? "Not Yet Provided" : email);
         object.put("age", age);
         object.put("address", address.length() <= 0 ? "Not Yet Provided" : address);
+        object.put("friends", friends.toJSONString());
 
         return object.toString();
     }
@@ -99,4 +105,24 @@ public class User extends BaseStoreImpl {
         this.username = username;
     }
 
+    public boolean isFriend(String username) throws Exception {
+        MyJSONArray array = new MyJSONArray(friends.toJSONString());
+        
+        int size = array.length();
+        for(int i = 0; i < size; i++) {
+            if(array.getString(i).equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public StorableList getFriends() {
+        return friends;
+    }
+
+    public void setFriends(StorableList friends) {
+        this.friends = friends;
+    }
+    
 }

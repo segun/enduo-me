@@ -1,20 +1,18 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 package com.trinisoft.enduome.ui;
 
-import com.sun.lwuit.Container;
-import com.sun.lwuit.List;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
-import com.sun.lwuit.layouts.BorderLayout;
 import com.sun.lwuit.layouts.BoxLayout;
 import com.sun.lwuit.list.ContainerList;
 import com.sun.lwuit.list.DefaultListModel;
-import com.trinisoft.baselib.util.Echo;
+import com.trinisoft.baselib.db.StorableList;
+import com.trinisoft.baselib.db.decorator.StoreDecorator;
 import com.trinisoft.enduome.EnduoMe;
-import java.util.Vector;
+import com.trinisoft.enduome.entities.EntityConstants;
 
 /**
  *
@@ -23,57 +21,56 @@ import java.util.Vector;
 public class OnlineListContainer extends ContainerList {
 
     EnduoMe parent;
-    Vector onlineVector;
-    //List online = null;
 
     public OnlineListContainer(EnduoMe parent) {
         setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         this.parent = parent;
-        init();                
+        init();
     }
 
     public void refresh() {
-        onlineVector = parent.client.onlineList;
-        
-        DefaultListModel model = new DefaultListModel(onlineVector);        
-        setModel(model);    
-        setRenderer(new Renderers.ButtonRenderer());
-        
-        System.out.println(getModel().getSize());
-        System.out.println(getModel().getItemAt(0));        
-    }
-    
-    private void init() {        
-        onlineVector = parent.client.onlineList;
-        
-        DefaultListModel model = new DefaultListModel(onlineVector);        
+        DefaultListModel model = new DefaultListModel(parent.client.onlineList);
+        removeAll();
         setModel(model);
-        
+        setRenderer(new Renderers.ButtonRenderer());
+
+    }
+
+    private void init() {
+        refresh();
+
         addActionListener(new ActionListener() {
 
             public void actionPerformed(ActionEvent ae) {
-                String selectedItem = getSelectedItem().toString();
-                System.out.println("Here in OLC");
-                parent.client.updateChatList(selectedItem);
+                final String selectedItem = getSelectedItem().toString();
 
-                /**
-                if (parent.homeForm.chattersListContainer == null) {
-                    parent.homeForm.chattersListContainer = new ChattersListContainer(parent, new ChattersListCommander(parent));
-                } else {
-                    parent.homeForm.chattersListContainer.chatters.addItem(selectedItem);
+                parent.client.updateChatList(selectedItem);
+                parent.homeForm.chattersList.refresh();
+
+
+                try {
+                    if (!EnduoMe.loggedInUser.isFriend(selectedItem)) {
+                        if (parent.homeForm.showConfirmDialog(selectedItem + " is not on your friend's list. Do you want to add before starting chat?")) {
+                            StorableList userFriends = EnduoMe.loggedInUser.getFriends();
+                            if (userFriends == null) {
+                                userFriends = new StorableList();
+                            } else {
+                                userFriends.addElement(selectedItem);
+                                EnduoMe.loggedInUser.setFriends(userFriends);
+                                new StoreDecorator(EnduoMe.loggedInUser).update(EntityConstants.USER_STORE, EnduoMe.loggedInUser.toJSONString().getBytes(), EnduoMe.loggedInUser.getId());
+                            }
+                        } else {
+                            //do nothing
+                        }
+                    } else {
+                        //do nothing
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
-                parent.homeForm.chattersListContainer.setSelectedItem(selectedItem);
-                
-                parent.homeForm.showForm(HomeForm.CHATS_FORM_SHOW_STRING);
-                * **/
+                parent.homeForm.currentTo = selectedItem;                        
+                parent.homeForm.startChat(selectedItem);
             }
         });
-        
-        setRenderer(new Renderers.ButtonRenderer());
-        System.out.println(getModel().getSize());
-        System.out.println(getModel().getItemAt(0));        
-        //online.setListCellRenderer(new Renderers.ButtonRenderer());
-
-        //addComponent(BorderLayout.CENTER, online);
     }
 }

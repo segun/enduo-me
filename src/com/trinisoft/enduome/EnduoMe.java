@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 package com.trinisoft.enduome;
 
@@ -44,7 +44,7 @@ public class EnduoMe extends MIDlet {
     Dialog advertDialog;
     public HomeForm homeForm;
     public Client client;
-    public static Container current;
+    //public static Container current;
     public static User loggedInUser;
     String newVersion, thisVersion = "1.0";
     CommonTransitions in = CommonTransitions.createFade(500);
@@ -65,13 +65,13 @@ public class EnduoMe extends MIDlet {
         }
 
         client = new Client(server, this);
-        
+
         final EnduoMe me = this;
         Display.getInstance().callSerially(new Runnable() {
 
             public void run() {
                 try {
-                    initForms();                    
+                    initForms();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -168,7 +168,7 @@ public class EnduoMe extends MIDlet {
         LoginForm loginForm = new LoginForm(this);
 
         if (EntityConstants.USER_STORE.getNumRecords() <= 0) {
-            current = loginForm;
+            //current = loginForm;
             loginForm.show();
         } else {
             User u = new User();
@@ -178,15 +178,16 @@ public class EnduoMe extends MIDlet {
                 u.fromJSONString(new String(re.nextRecord()));
             }
             loggedInUser = u;
-            current = homeForm;
+            //current = homeForm;
+            homeForm.setTitle("Enduo-Me : Welcome " + loggedInUser.getUsername());
             homeForm.show();
-            
-            Display.getInstance().callSerially(new Runnable() {
+
+            new Thread() {
 
                 public void run() {
                     startChat();
                 }
-            });
+            }.start();
         }
     }
 

@@ -61,7 +61,7 @@ public class Client implements Runnable {
 
     public void updateClientsList(Vector newList) {
         this.onlineList = newList;
-        //parent.homeForm.updateClientsList();
+        parent.homeForm.updateClientsList();
     }
 
     public void updateChatList(String chatUser) {
@@ -74,7 +74,7 @@ public class Client implements Runnable {
         this.lastMessage = lastMessage;
         messageList.addElement(lastMessage);
         updateChatList(lastMessage.getFrom());
-        //parent.homeForm.doNewMessage(lastMessage);
+        parent.homeForm.doNewMessage(lastMessage);
     }
 
     public void run() {

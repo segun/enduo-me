@@ -27,7 +27,7 @@ public class LoginForm extends BaseForm {
     public static final int LOGIN_ACTION = 1;
     public static final int QUIT_ACTION = 2;
     EnduoMe parent;
-
+       
     public LoginForm(EnduoMe parent) {
         super(parent);
         this.parent = parent;
@@ -42,7 +42,7 @@ public class LoginForm extends BaseForm {
     private void init() {
         setTitle("Enter your name");
         nameField = new XTextField();
-        addWithLabel("Enter you name (compulsory)", nameField);
+        addWithLabel("Enter your username (compulsory)", nameField);
 
         ageField = new XTextField();
         ageField.setInputMode("123");
@@ -100,16 +100,15 @@ public class LoginForm extends BaseForm {
                             new StoreDecorator(u).save(EntityConstants.USER_STORE);
                             //showMessageDialog("Success", "User Registration Successfull", true);
 
-                            parent.loggedInUser = u;
+                            EnduoMe.loggedInUser = u;
                             Display.getInstance().callSerially(new Runnable() {
 
                                 public void run() {
                                     parent.startChat();
                                 }
-                            });
-                            HomeForm homeForm = new HomeForm(parent);
-                            parent.current = homeForm;
-                            homeForm.show();
+                            });    
+                            parent.homeForm.setTitle("Enduo-Me : Welcome " + u.getUsername());
+                            parent.homeForm.show();
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }

@@ -42,7 +42,7 @@ public class ChatsContainer extends Container {
             Container oneMessageContainer = new Container(new BorderLayout());
 
             TextArea area = new TextArea(message.getMsg());
-            area.setRows(2);
+            area.setRows(3);
 
             oneMessageContainer.addComponent(BorderLayout.CENTER, area);
             Label nameLabel = new Label("");
@@ -74,7 +74,7 @@ public class ChatsContainer extends Container {
             chatContainer.addComponent(oneMessageContainer);
 
             this.addComponent(0, chatContainer);
-            area.setFocus(true);
+            area.setFocus(true);            
             this.repaint();
         }
     }
