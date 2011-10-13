@@ -5,17 +5,14 @@
 package com.trinisoft.enduome.ui;
 
 import com.sun.lwuit.*;
-import com.sun.lwuit.events.ActionEvent;
-import com.sun.lwuit.events.ActionListener;
-import com.sun.lwuit.layouts.BorderLayout;
-import com.sun.lwuit.layouts.BoxLayout;
 import com.sun.lwuit.list.ContainerList;
 import com.trinisoft.baselib.util.Date;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
 import com.trinisoft.mlib.views.BaseForm;
-import com.trinisoft.mlib.views.XTextField;
 import java.util.Hashtable;
+import javax.microedition.media.Manager;
+import javax.microedition.media.MediaException;
 
 /**
  *
@@ -86,6 +83,11 @@ public class HomeForm extends BaseForm {
         if (messagesForm.isVisible()) {
             if (messagesForm.from.equals(from)) {
                 startChat(from);
+                try {
+                    Manager.playTone(69, 3000, 100);
+                } catch (MediaException ex) {
+                    ex.printStackTrace();
+                }
             } else {
                 showAlert(message);
             }
@@ -115,7 +117,7 @@ public class HomeForm extends BaseForm {
         }
     }
 
-    public void startChat(String from) {        
+    public void startChat(String from) {
         ChatsContainer chatsContainer = null;
         if (chats.get(from) == null) {
             chatsContainer = new ChatsContainer(parent, from);
@@ -131,7 +133,7 @@ public class HomeForm extends BaseForm {
         } else {
             messagesForm.showChatContainer(chatsContainer);
         }
-        
+
         messagesForm.setFrom(from);
         messagesForm.show();
     }
