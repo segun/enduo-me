@@ -4,6 +4,7 @@
  */
 package com.trinisoft.enduome.ui;
 
+import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.layouts.BoxLayout;
 import com.sun.lwuit.list.ContainerList;
@@ -21,7 +22,7 @@ public class ChattersListContainer extends ContainerList {
     //List chatters;
     ActionListener chattersListCommander;
 
-    public ChattersListContainer(EnduoMe parent, ActionListener chattersListCommander) {
+    public ChattersListContainer(EnduoMe parent) {
         setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         this.parent = parent;
         this.chattersListCommander = chattersListCommander;
@@ -31,11 +32,19 @@ public class ChattersListContainer extends ContainerList {
     public void refresh() {
         DefaultListModel model = new DefaultListModel(parent.client.chattersList);
         setModel(model);
-        setRenderer(new Renderers.ButtonRenderer());
-
+        setRenderer(new Renderers.ButtonRenderer());        
     }
 
     private void init() {
         refresh();
+        
+        addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent ae) {
+                final String selectedItem = getSelectedItem().toString();
+                parent.homeForm.currentTo = selectedItem;                        
+                parent.homeForm.startChat(selectedItem);
+            }
+        });        
     }
 }

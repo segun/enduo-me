@@ -5,12 +5,15 @@
 package com.trinisoft.enduome.ui;
 
 import com.sun.lwuit.*;
-import com.sun.lwuit.list.ContainerList;
+import com.sun.lwuit.events.ActionEvent;
+import com.sun.lwuit.events.ActionListener;
+import com.sun.lwuit.layouts.GridLayout;
 import com.trinisoft.baselib.util.Date;
 import com.trinisoft.enduome.EnduoMe;
 import com.trinisoft.enduome.models.Message;
 import com.trinisoft.mlib.views.BaseForm;
 import java.util.Hashtable;
+import java.util.Vector;
 import javax.microedition.media.Manager;
 import javax.microedition.media.MediaException;
 
@@ -23,14 +26,19 @@ public class HomeForm extends BaseForm {
     EnduoMe parent;
     OnlineListContainer onlineNow;
     ChattersListContainer chattersList;
+    public FriendsListContainer friendsList;
     Tabs homeTabs = new Tabs(Tabs.TOP);
     private static Hashtable chats = new Hashtable();
     public String currentTo;
-    //Container chatsContainer = new Container(new BorderLayout());    
     public MessagesForm messagesForm = null;
     public static final int ONLINE_TAB_INDEX = 0;
     public static final int CHATTERS_TAB_INDEX = 1;
     public static final int FRIENDS_TAB_INDEX = 2;
+    public static final int QUIT_ACTION = 102;
+    public static final int SHOW_OFFLINE_ACTION = 103;
+    public static final int HIDE_OFFLINE_ACTION = 104;
+    public static boolean showOffline = true;
+    Command showOfflineCommand, hideOfflineCommand;
 
     public HomeForm(EnduoMe parent) {
         super(parent);
@@ -42,15 +50,90 @@ public class HomeForm extends BaseForm {
         setTitle("Enduo-Me : Welcome ");
 
         onlineNow = new OnlineListContainer(parent);
-        chattersList = new ChattersListContainer(parent, null);
+        chattersList = new ChattersListContainer(parent);
+        friendsList = new FriendsListContainer(parent);
+
+        homeTabs.getTabsContainer().setLayout(new GridLayout(1, 3));
 
         homeTabs.addTab("Online", onlineNow);
         homeTabs.addTab("Chats", chattersList);
-        homeTabs.addTab("Friends", new ContainerList());
+        homeTabs.addTab("Friends", friendsList);
+
+        Command quitCommmand = new Command("Quit", QUIT_ACTION);
+        addCommand(quitCommmand);
 
         homeTabs.setSelectedIndex(0);
 
+        showOfflineCommand = new Command("Show Offline", SHOW_OFFLINE_ACTION);
+        hideOfflineCommand = new Command("Hine Offline", HIDE_OFFLINE_ACTION);
+
+        addCommand(showOfflineCommand);
+        addCommand(hideOfflineCommand);
+
+        Button friendsButton = (Button) homeTabs.getTabsContainer().getComponentAt(2);
+        Button chatsButton = (Button) homeTabs.getTabsContainer().getComponentAt(1);
+        Button onlineButton = (Button) homeTabs.getTabsContainer().getComponentAt(0);
+
+        chatsButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                removeCommand(showOfflineCommand);
+                removeCommand(hideOfflineCommand);
+            }
+        });
+
+        onlineButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                removeCommand(showOfflineCommand);
+                removeCommand(hideOfflineCommand);
+            }
+        });
+
+        friendsButton.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    friendsList.refresh();
+                    addCommand(showOfflineCommand);
+                    addCommand(hideOfflineCommand);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
         //chatsBaseContainer.addComponent(BorderLayout.NORTH, sendContainer);
+
+
+
+        addCommandListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent evt) {
+                int cid = evt.getCommand().getId();
+
+                switch (cid) {
+                    case QUIT_ACTION:
+                        parent.notifyDestroyed();
+                        break;
+                    case SHOW_OFFLINE_ACTION:
+                        showOffline = true;
+                        try {
+                            friendsList.refresh();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        break;
+                    case HIDE_OFFLINE_ACTION:
+                        showOffline = false;
+                        try {
+                            friendsList.refresh();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        break;                        
+                }
+            }
+        });
 
         addComponent(homeTabs);
     }
@@ -136,5 +219,10 @@ public class HomeForm extends BaseForm {
 
         messagesForm.setFrom(from);
         messagesForm.show();
+    }
+
+    public boolean isOnline(String user) {        
+        Vector onlineList = parent.client.onlineList;
+        return onlineList.contains(user);
     }
 }

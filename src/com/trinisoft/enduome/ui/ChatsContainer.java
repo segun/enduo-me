@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 package com.trinisoft.enduome.ui;
 
@@ -49,32 +49,41 @@ public class ChatsContainer extends Container {
             if (messageFrom.equals(you)) {
                 nameLabel.setText("YOU");
                 nameLabel.getStyle().setBgColor(0x657300);
-                //area.getUnselectedStyle().setBgColor(0x657300);
+
+                area.getSelectedStyle().setBorder(Border.createBevelRaised());
+                area.getSelectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
+                area.getSelectedStyle().setBgColor(0x657300);
+                area.getSelectedStyle().setFgColor(0xffffff);
+                
+                area.getUnselectedStyle().setBorder(Border.createLineBorder(5));
+                area.getUnselectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
+                area.getUnselectedStyle().setBgColor(0x657300);
+                area.getUnselectedStyle().setFgColor(0xffffff);
             } else {
                 nameLabel.setText(from);
                 nameLabel.getStyle().setBgColor(0x657383);
-                //area.getUnselectedStyle().setBgColor(0x657383);
+
+                area.getSelectedStyle().setBorder(Border.createBevelRaised());
+                area.getSelectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
+                area.getSelectedStyle().setBgColor(0x657383);
+                area.getSelectedStyle().setFgColor(0xffffff);
+                
+                area.getUnselectedStyle().setBorder(Border.createLineBorder(5));
+                area.getUnselectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
+                area.getUnselectedStyle().setBgColor(0x657383);
+                area.getUnselectedStyle().setFgColor(0xffffff);
             }
 
             oneMessageContainer.addComponent(BorderLayout.NORTH, nameLabel);
             nameLabel.setText(nameLabel.getText() + " | " + message.getTime().toString());
             nameLabel.getStyle().setBorder(Border.createRoundBorder(10, 10, 0x0ff12f, true));
             nameLabel.getStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_SMALL), true);
-            nameLabel.getStyle().setFgColor(0xffffff);
-
-            area.getSelectedStyle().setBorder(Border.createBevelRaised());
-            area.getSelectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
-            area.getSelectedStyle().setFgColor(0x657383);
-
-            area.getUnselectedStyle().setBorder(Border.createBevelLowered());
-            area.getUnselectedStyle().setFont(Font.createSystemFont(Font.FACE_MONOSPACE, Font.STYLE_BOLD, Font.SIZE_MEDIUM), true);
-            area.getUnselectedStyle().setFgColor(0x657383);
-            //area.getUnselectedStyle().setFgColor(0xffffff);
+            nameLabel.getStyle().setFgColor(0xffffff);            
 
             chatContainer.addComponent(oneMessageContainer);
 
             this.addComponent(0, chatContainer);
-            area.setFocus(true);            
+            //area.requestFocus();
             this.repaint();
         }
     }

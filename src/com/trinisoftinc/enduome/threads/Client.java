@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 package com.trinisoftinc.enduome.threads;
 
@@ -46,10 +46,10 @@ public class Client implements Runnable {
     }
 
     public void sendMessage(Message message) throws Exception {
-        String sendThis = "message:from=" + message.getFrom() + ":s" +
-                "to=" + message.getTo() + ":s" +
-                "date=" + message.getTime().getTime() + ":s" +
-                "msg=" + message.getMsg() + "\n";
+        String sendThis = "message:from=" + message.getFrom() + ":s"
+                + "to=" + message.getTo() + ":s"
+                + "date=" + message.getTime().getTime() + ":s"
+                + "msg=" + message.getMsg() + "\n";
         try {
             writer.write(sendThis, true);
             writer.flush();
@@ -65,8 +65,10 @@ public class Client implements Runnable {
     }
 
     public void updateChatList(String chatUser) {
-        if(!chattersList.contains(chatUser)) {
-            chattersList.addElement(chatUser);
+        if (!chattersList.contains(chatUser)) {
+            if (!chatUser.equals(EnduoMe.loggedInUser.getUsername())) {
+                chattersList.addElement(chatUser);
+            }
         }
     }
 

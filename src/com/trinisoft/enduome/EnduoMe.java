@@ -164,9 +164,10 @@ public class EnduoMe extends MIDlet {
     }
 
     private void initForms() throws Exception {
-        homeForm = new HomeForm(this);
         LoginForm loginForm = new LoginForm(this);
-
+        
+        loggedInUser = new User();
+        homeForm = new HomeForm(this);
         if (EntityConstants.USER_STORE.getNumRecords() <= 0) {
             //current = loginForm;
             loginForm.show();

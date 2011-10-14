@@ -7,8 +7,8 @@ package com.trinisoft.enduome.entities;
 import com.trinisoft.baselib.db.BaseStore;
 import com.trinisoft.baselib.db.BaseStoreImpl;
 import com.trinisoft.baselib.db.StorableList;
-import com.trinisoft.baselib.util.Echo;
 import java.io.IOException;
+import java.util.Vector;
 import javax.microedition.rms.RecordStore;
 import javax.microedition.rms.RecordStoreException;
 import trinisoftinc.json.me.MyJSONArray;
@@ -117,12 +117,11 @@ public class User extends BaseStoreImpl {
         return false;
     }
     
-    public StorableList getFriends() {
+    public StorableList getFriends() {        
         return friends;
     }
 
     public void setFriends(StorableList friends) {
         this.friends = friends;
-    }
-    
+    }   
 }

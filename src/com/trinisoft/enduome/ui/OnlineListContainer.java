@@ -58,6 +58,7 @@ public class OnlineListContainer extends ContainerList {
                                 userFriends.addElement(selectedItem);
                                 EnduoMe.loggedInUser.setFriends(userFriends);
                                 new StoreDecorator(EnduoMe.loggedInUser).update(EntityConstants.USER_STORE, EnduoMe.loggedInUser.toJSONString().getBytes(), EnduoMe.loggedInUser.getId());
+                                parent.homeForm.friendsList.refresh();
                             }
                         } else {
                             //do nothing
