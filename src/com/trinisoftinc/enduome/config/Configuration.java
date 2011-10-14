@@ -10,5 +10,6 @@ package com.trinisoftinc.enduome.config;
  */
 public final class Configuration {
     public static final String SERVER_NAME = "unotifier.com";
+    //public static final String SERVER_NAME = "localhost";
     public static final int SERVER_PORT = 1981;
 }
