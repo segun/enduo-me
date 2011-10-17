@@ -16,6 +16,8 @@ import com.trinisoft.enduome.entities.EntityConstants;
 import com.trinisoft.enduome.entities.User;
 import com.trinisoft.mlib.views.BaseForm;
 import com.trinisoft.mlib.views.XTextField;
+import javax.microedition.rms.RecordEnumeration;
+import javax.microedition.rms.RecordStore;
 
 /**
  *
@@ -95,6 +97,14 @@ public class LoginForm extends BaseForm {
                                 } else {
                                     u.setAge(0);
                                 }
+                            }
+                            try {
+                                RecordEnumeration re = EntityConstants.USER_STORE.enumerateRecords(null, null, true);
+                                while(re.hasNextElement()) {
+                                    EntityConstants.USER_STORE.deleteRecord(re.nextRecordId());
+                                }
+                            } catch(Exception e) {
+                                e.printStackTrace();
                             }
                             u.setEmail(emailField.getText());
                             new StoreDecorator(u).save(EntityConstants.USER_STORE);

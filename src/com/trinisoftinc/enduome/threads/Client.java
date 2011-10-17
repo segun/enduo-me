@@ -28,6 +28,8 @@ public class Client implements Runnable {
     public boolean isRunning = false;
     EnduoMe parent;
     BufferedWriter writer;
+    public SocketConnection connection;
+    public ProtocolHandler protocolHandler;
 
     public Client(String url, EnduoMe parent) {
         this.url = url;
@@ -37,7 +39,25 @@ public class Client implements Runnable {
         chattersList = new Vector();
     }
 
+    public void stop() {
+        if (isRunning) {
+            try {
+                writer.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            try {
+                connection.close();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            isRunning = false;
+        }
+        protocolHandler.stop();
+    }
+
     public void start() {
+        Echo.outln("In Client RUN: " + isRunning);
         if (!isRunning) {
             Thread t = new Thread(this);
             t.start();
@@ -83,7 +103,7 @@ public class Client implements Runnable {
         try {
             String myName = parent.loggedInUser.getUsername();
             Echo.outln("In RUN: tryeing to connect to " + url);
-            SocketConnection connection = (SocketConnection) Connector.open(url);
+            connection = (SocketConnection) Connector.open(url);
             InputStream is = connection.openInputStream();
             OutputStream os = connection.openOutputStream();
             Echo.outln("In RUN: cnnected");
@@ -94,7 +114,9 @@ public class Client implements Runnable {
             writer.flush();
 
             BufferedReader reader = new BufferedReader(is);
-            new ProtocolHandler(this, reader, writer).start();
+            
+            protocolHandler = new ProtocolHandler(this, reader, writer);
+            protocolHandler.start();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,6 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * To change this template, choose Tools | Templates and open the template in
+ * the editor.
  */
 package com.trinisoftinc.enduome.threads;
 
@@ -30,18 +30,31 @@ public class ProtocolHandler implements Runnable {
     }
 
     public void start() {
-        Echo.outln("In Start: " + isRunning);
-        if(!isRunning) {
+        Echo.outln("In PH Start: " + isRunning);
+        if (!isRunning) {
             Thread t = new Thread(this);
             t.start();
             isRunning = true;
         }
     }
+
+    public void stop() {
+        if (isRunning) {
+            try {
+                reader.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            isRunning = false;
+        }
+    }
+
     public void run() {
-        Echo.outln("In RUN");
+        Echo.outln("In PH RUN " + isRunning);
         while (isRunning) {
             try {
                 String line = reader.readLine();
+                Echo.outln("IN PH: " + line);
                 if (line != null) {
                     if (line.startsWith("clients:")) {
                         line = MStrings.replace(line, "clients:", "");
@@ -73,7 +86,7 @@ public class ProtocolHandler implements Runnable {
                 long dateInMillis = Long.parseLong(token.substring((token.indexOf("=") + 1), token.length()));
                 Date date = new Date(dateInMillis);
                 message.setTime(date);
-            } else if(MStrings.contains(token, "msg=")) {
+            } else if (MStrings.contains(token, "msg=")) {
                 message.setMsg(token.substring((token.indexOf("=") + 1), token.length()));
             }
         }

@@ -43,6 +43,7 @@ public class EnduoMe extends MIDlet {
     Image advertImage;
     Dialog advertDialog;
     public HomeForm homeForm;
+    public LoginForm loginForm;
     public Client client;
     //public static Container current;
     public static User loggedInUser;
@@ -164,7 +165,7 @@ public class EnduoMe extends MIDlet {
     }
 
     private void initForms() throws Exception {
-        LoginForm loginForm = new LoginForm(this);
+        loginForm = new LoginForm(this);
         
         loggedInUser = new User();
         homeForm = new HomeForm(this);

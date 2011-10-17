@@ -4,7 +4,10 @@
  */
 package com.trinisoft.enduome.ui;
 
-import com.sun.lwuit.*;
+import com.sun.lwuit.Button;
+import com.sun.lwuit.Command;
+import com.sun.lwuit.Dialog;
+import com.sun.lwuit.Tabs;
 import com.sun.lwuit.events.ActionEvent;
 import com.sun.lwuit.events.ActionListener;
 import com.sun.lwuit.layouts.GridLayout;
@@ -59,13 +62,13 @@ public class HomeForm extends BaseForm {
         homeTabs.addTab("Chats", chattersList);
         homeTabs.addTab("Friends", friendsList);
 
-        Command quitCommmand = new Command("Quit", QUIT_ACTION);
+        Command quitCommmand = new Command("Logout", QUIT_ACTION);
         addCommand(quitCommmand);
 
         homeTabs.setSelectedIndex(0);
 
         showOfflineCommand = new Command("Show Offline", SHOW_OFFLINE_ACTION);
-        hideOfflineCommand = new Command("Hine Offline", HIDE_OFFLINE_ACTION);
+        hideOfflineCommand = new Command("Hide Offline", HIDE_OFFLINE_ACTION);
 
         addCommand(showOfflineCommand);
         addCommand(hideOfflineCommand);
@@ -113,7 +116,8 @@ public class HomeForm extends BaseForm {
 
                 switch (cid) {
                     case QUIT_ACTION:
-                        parent.notifyDestroyed();
+                        parent.client.stop();
+                        parent.loginForm.show();
                         break;
                     case SHOW_OFFLINE_ACTION:
                         showOffline = true;
@@ -130,7 +134,7 @@ public class HomeForm extends BaseForm {
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
-                        break;                        
+                        break;
                 }
             }
         });
@@ -163,13 +167,17 @@ public class HomeForm extends BaseForm {
             chats.put(from, container);
         }
 
-        if (messagesForm.isVisible()) {
-            if (messagesForm.from.equals(from)) {
-                startChat(from);
-                try {
-                    Manager.playTone(69, 3000, 100);
-                } catch (MediaException ex) {
-                    ex.printStackTrace();
+        if (messagesForm != null) {
+            if (messagesForm.isVisible()) {
+                if (messagesForm.from.equals(from)) {
+                    startChat(from);
+                    try {
+                        Manager.playTone(69, 3000, 100);
+                    } catch (MediaException ex) {
+                        ex.printStackTrace();
+                    }
+                } else {
+                    showAlert(message);
                 }
             } else {
                 showAlert(message);
@@ -221,7 +229,7 @@ public class HomeForm extends BaseForm {
         messagesForm.show();
     }
 
-    public boolean isOnline(String user) {        
+    public boolean isOnline(String user) {
         Vector onlineList = parent.client.onlineList;
         return onlineList.contains(user);
     }
