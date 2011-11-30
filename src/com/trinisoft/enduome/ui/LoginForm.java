@@ -17,7 +17,6 @@ import com.trinisoft.enduome.entities.User;
 import com.trinisoft.mlib.views.BaseForm;
 import com.trinisoft.mlib.views.XTextField;
 import javax.microedition.rms.RecordEnumeration;
-import javax.microedition.rms.RecordStore;
 
 /**
  *
